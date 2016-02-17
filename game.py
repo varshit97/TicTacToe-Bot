@@ -15,17 +15,17 @@ import random
 class Game:
     def __init__(self):
         #Blocks to Cells mapping
-        self.board={
-                (0,0):[[0 for i in range(3)]for i in range(3)],
-                (0,1):[[0 for i in range(3)]for i in range(3)],
-                (0,2):[[0 for i in range(3)]for i in range(3)],
-                (1,0):[[0 for i in range(3)]for i in range(3)],
-                (1,1):[[0 for i in range(3)]for i in range(3)],
-                (1,2):[[0 for i in range(3)]for i in range(3)],
-                (2,0):[[0 for i in range(3)]for i in range(3)],
-                (2,1):[[0 for i in range(3)]for i in range(3)],
-                (2,2):[[0 for i in range(3)]for i in range(3)]}
-        self.boardCopy=self.board
+        # self.board={
+        #         (0,0):[[0 for i in range(3)]for i in range(3)],
+        #         (0,1):[[0 for i in range(3)]for i in range(3)],
+        #         (0,2):[[0 for i in range(3)]for i in range(3)],
+        #         (1,0):[[0 for i in range(3)]for i in range(3)],
+        #         (1,1):[[0 for i in range(3)]for i in range(3)],
+        #         (1,2):[[0 for i in range(3)]for i in range(3)],
+        #         (2,0):[[0 for i in range(3)]for i in range(3)],
+        #         (2,1):[[0 for i in range(3)]for i in range(3)],
+        #         (2,2):[[0 for i in range(3)]for i in range(3)]}
+        # self.boardCopy=self.board
         #Cells to Blocks mapping
         self.goTo={
                 (0,0):[(1,0),(0,1)],
@@ -51,9 +51,11 @@ class Game:
     def makeMove(self,enemyPos,depth,board):
         miniMaxDict={}
         #self.board[(enemyPos[0]/3,enemyPos[1]/3)][enemyPos[0]%3][enemyPos[1]%3]=2
-        board[(enemyPos[0]/3,enemyPos[1]/3)][enemyPos[0]%3][enemyPos[1]%3]=2
+        # board[(enemyPos[0]/3,enemyPos[1]/3)][enemyPos[0]%3][enemyPos[1]%3]=2
+        board[enemyPos[0]][enemyPos[1]]=2
         ourBlocks=self.goTo[(enemyPos[0]%3,enemyPos[1]%3)]
-        board1={}
+        # print "copyo %s" %(board1) 
+        # board1=board
         if depth==2:
             p=random.randint(-10,10)
             #print p,enemyPos
@@ -62,12 +64,18 @@ class Game:
             for i in range(len(ourBlocks)):
                 cells=ourBlocks[i]
                 base_tuple=self.base[cells]
-                cell=self.board[cells]
+                # cell=board[cells]
                 for j in range(3):
                     for k in range(3):
-                        if cell[j][k]==0:
-                            utility=self.makeMove((j+base_tuple[0],k+base_tuple[1]),depth+1,board)
+                        if board[j+base_tuple[0]][k+base_tuple[1]]==0:
+                        	temp = [[0 for i in range(10)] for j in range(10)]
+                        	for l in range(9):
+                        		for m in range(9):
+									temp[l][m]=board[l][m]
+							utility=self.makeMove((j+base_tuple[0],k+base_tuple[1]),depth+1,temp)
                             print utility,j+base_tuple[0],k+base_tuple[1]
+                            print "!@#$%^&*("
+                            print board
                             miniMaxDict[utility]=(j,k)
         print miniMaxDict
         print "%%%"
@@ -91,4 +99,4 @@ class Game:
 #             (2,1):[[0 for i in range(3)]for i in range(3)],
 #             (2,2):[[0 for i in range(3)]for i in range(3)]}
 play=Game()
-print play.makeMove((7,8),0,{(0, 0): [[0, 0, 0], [0, 0, 0], [0, 0, 0]],(0, 1): [[0, 0, 0], [0, 0, 0], [0, 0, 0]],(0, 2): [[0, 0, 0], [0, 0, 0], [0, 0, 0]], (1, 0): [[0, 0, 0], [0, 0, 0], [0, 0, 0]], (1, 1): [[0, 0, 0], [0, 0, 0], [0, 0, 0]], (1, 2): [[0, 0, 0], [0, 0, 0], [0, 0, 0]], (2, 0): [[0, 0, 0], [0, 0, 0], [0, 0, 0]], (2, 1): [[0, 0, 0], [0, 0, 0], [0, 0, 0]], (2, 2): [[0, 0, 0], [0, 0, 0], [0, 0, 0]]})
+print play.makeMove((7,8),0,[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]])

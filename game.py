@@ -43,15 +43,19 @@ class Player36:
         if enemyPos[0]==-1:
             pos=(4,(2,2))
             return pos
-        if(flag=='x'):
+        if(flag=='x' and depth!=0):
         	board[enemyPos[0]][enemyPos[1]]='x'
-        else:
+        if(flag=='o' and depth!=0):
         	board[enemyPos[0]][enemyPos[1]]='o'
         ourBlocks=self.goTo[(enemyPos[0]%3,enemyPos[1]%3)]
+        for iters in len(ourBlocks):
+            if(block[ourBlocks[iters][0]*3+ourBlocks[iters][1]]!='-'):
+                ourBlocks.remove(iters)
         if depth==2:
             p=random.randint(-10,10)
             return (p,0)
         else:
+            print ourBlocks,"!!!!!!!!!!!!!!!!!!!"
             for i in range(len(ourBlocks)):
                 cells=ourBlocks[i]
                 base_tuple=self.base[cells]
@@ -73,7 +77,7 @@ class Player36:
     def move(self,board,block,enemyPos,flag):
     	final=self.makeMove(board,block,enemyPos,0,flag)
         # print final
-        print '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+        print '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',flag,final[1]
     	return final[1]
 
 # flag=sys.argv[1]

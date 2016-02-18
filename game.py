@@ -6,16 +6,18 @@
 #
 # Distributed under terms of the MIT license.
 
+
 """
 
 """
 
 import random
-import sys
+#import sys
 
 class Player36:
+
     def __init__(self):
-        #Cells to Blocks mapping
+        #Valid moves
         self.goTo={
                 (0,0):[(1,0),(0,1)],
                 (0,1):[(0,0),(0,2)],
@@ -27,6 +29,7 @@ class Player36:
                 (2,1):[(2,0),(2,2)],
                 (2,2):[(1,2),(2,1)]
                 }
+        #Offset for block to cell mapping
         self.base={
                 (0,0):[0,0],
                 (0,1):[0,3],
@@ -38,37 +41,41 @@ class Player36:
                 (2,1):[6,3],
                 (2,2):[6,6],
                 }
+
     def makeMove(self,board,block,enemyPos,depth,flag):
+        #First move
         miniMaxDict={}
         if enemyPos[0]==-1:
             pos=(4,(2,2))
             return pos
+
+        #Assigning signs
         if(flag=='x' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='x'
         if(flag=='o' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='o'
         ourBlocks=self.goTo[(enemyPos[0]%3,enemyPos[1]%3)]
-        # print ourBlocks,'--------------'
+        
+        #Checking for free moves
         templist=[]
         for iters in range(len(ourBlocks)):
             if(block[ourBlocks[iters][0]*3+ourBlocks[iters][1]]=='-'):
-                # print ourBlocks[iters]
                 templist.append(ourBlocks[iters])
-                # ourBlocks.remove(ourBlocks[iters])
-                # print ourBlocks
+
+        #Block empty or not
         ourBlocks = templist
         if(len(ourBlocks)==0):
             templist=[]
-            for aa in range(9):
-                if(block[aa]=='-'):
-                    templist.append((aa/3,aa%3))
+            for position in range(9):
+                if(block[position]=='-'):
+                    templist.append((position/3,position%3))
         ourBlocks = templist
-        # print ourBlocks
+        
+        #Final return of heuristic
         if depth==2:
             p=random.randint(-10,10)
             return (p,0)
         else:
-            # print ourBlocks,"!!!!!!!!!!!!!!!!!!!"
             for i in range(len(ourBlocks)):
                 cells=ourBlocks[i]
                 base_tuple=self.base[cells]
@@ -79,20 +86,24 @@ class Player36:
                             for l in range(9):
                                 for m in range(9):
                                     temp[l][m]=board[l][m]
+
+                            #Calling minimax recursively
                             rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag)
-                            # print rtuple
                             utility=rtuple[0]
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
+
+        print "miniMax len %s" %len(miniMaxDict)
+        #Return the max or min values based on level 
         if depth%2==1 and len(miniMaxDict)!=0:
             return sorted(miniMaxDict.items())[0]
         if depth%2==0 and len(miniMaxDict)!=0:
             return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
 
     def move(self,board,block,enemyPos,flag):
-      final=self.makeMove(board,block,enemyPos,0,flag)
-        # print final
-        print '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',flag,final[1]
-      return final[1]
+        #calling minimax funtion
+        final=self.makeMove(board,block,enemyPos,0,flag)
+        print 'Player sign and move',flag,final[1]
+        return final[1]
 
 # flag=sys.argv[1]
 # flag='x'

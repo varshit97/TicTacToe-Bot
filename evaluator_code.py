@@ -45,7 +45,7 @@ class Player1:
 		blocks_allowed  = determine_blocks_allowed(old_move, temp_block)
 		#Get list of empty valid cells
 		cells = get_empty_out_of(temp_board, blocks_allowed,temp_block)
-                obj1 = Player76old()
+                obj1 = Player36()
                 mvp = obj1.move(temp_board,temp_block,old_move,flag)
                 return (int(mvp[0]), int(mvp[1]))
 		#Choose a move based on some algorithm, here it is a random move.

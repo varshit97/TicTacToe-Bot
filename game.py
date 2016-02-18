@@ -17,6 +17,7 @@ import random
 class Player36:
 
     def __init__(self):
+
         #Valid moves
         self.goTo={
                 (0,0):[(1,0),(0,1)],
@@ -29,6 +30,7 @@ class Player36:
                 (2,1):[(2,0),(2,2)],
                 (2,2):[(1,2),(2,1)]
                 }
+
         #Offset for block to cell mapping
         self.base={
                 (0,0):[0,0],
@@ -43,6 +45,7 @@ class Player36:
                 }
 
     def makeMove(self,board,block,enemyPos,depth,flag):
+
         #First move
         miniMaxDict={}
         if enemyPos[0]==-1:
@@ -93,6 +96,7 @@ class Player36:
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
 
         print "miniMax len %s" %len(miniMaxDict)
+
         #Return the max or min values based on level 
         if depth%2==1 and len(miniMaxDict)!=0:
             return sorted(miniMaxDict.items())[0]
@@ -100,6 +104,7 @@ class Player36:
             return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
 
     def move(self,board,block,enemyPos,flag):
+
         #calling minimax funtion
         final=self.makeMove(board,block,enemyPos,0,flag)
         print 'Player sign and move',flag,final[1]

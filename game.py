@@ -52,20 +52,31 @@ class Player36:
             pos=(4,(2,2))
             return pos
 
+        # glaf var to determine draw of a block
+        glaf=0
         #Assigning signs
         if(flag=='x' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='x'
         if(flag=='o' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='o'
+        base_tuple=self.base[(enemyPos[0]/3,enemyPos[1]/3)]
+        for j in range(3):
+            for k in range(3):
+                if board[j+base_tuple[0]][k+base_tuple[1]]=='-':
+                    glaf=1
+                    break
+        if glaf==0:
+            block[(enemyPos[0]/3)*3+(enemyPos[1]/3)]='D'
+
         ourBlocks=self.goTo[(enemyPos[0]%3,enemyPos[1]%3)]
         
-        #Checking for free moves
+        #Checking for moves
         templist=[]
         for iters in range(len(ourBlocks)):
             if(block[ourBlocks[iters][0]*3+ourBlocks[iters][1]]=='-'):
                 templist.append(ourBlocks[iters])
 
-        #Block empty or not
+        #Block empty or not to get a free move
         ourBlocks = templist
         if(len(ourBlocks)==0):
             templist=[]
@@ -73,7 +84,11 @@ class Player36:
                 if(block[position]=='-'):
                     templist.append((position/3,position%3))
         ourBlocks = templist
-        
+
+        #leaf node
+        if(len(ourBlocks)==0):
+            return (random.randint(-10,10),0)
+
         #Final return of heuristic
         if depth==2:
             p=random.randint(-10,10)
@@ -95,7 +110,7 @@ class Player36:
                             utility=rtuple[0]
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
 
-        print "miniMax len %s" %len(miniMaxDict)
+        # print "miniMax len %s" %len(miniMaxDict)
 
         #Return the max or min values based on level 
         if depth%2==1 and len(miniMaxDict)!=0:
@@ -104,9 +119,11 @@ class Player36:
             return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
 
     def move(self,board,block,enemyPos,flag):
-
         #calling minimax funtion
-        final=self.makeMove(board,block,enemyPos,0,flag)
+        temp=[]
+        for i in range(9):
+            temp.append(block[i])
+        final=self.makeMove(board,temp,enemyPos,0,flag)
         print 'Player sign and move',flag,final[1]
         return final[1]
 

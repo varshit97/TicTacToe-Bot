@@ -52,8 +52,9 @@ class Player36:
             pos=(4,(2,2))
             return pos
 
-        # glaf var to determine draw of a block
-        glaf=0
+        #To determine draw of a block
+        drawFlag=0
+
         #Assigning signs
         if(flag=='x' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='x'
@@ -63,9 +64,9 @@ class Player36:
         for j in range(3):
             for k in range(3):
                 if board[j+base_tuple[0]][k+base_tuple[1]]=='-':
-                    glaf=1
+                    drawFlag=1
                     break
-        if glaf==0:
+        if drawFlag==0:
             block[(enemyPos[0]/3)*3+(enemyPos[1]/3)]='D'
 
         ourBlocks=self.goTo[(enemyPos[0]%3,enemyPos[1]%3)]

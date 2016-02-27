@@ -113,9 +113,10 @@ class Player36:
         # print "miniMax len %s" %len(miniMaxDict)
 
         #Return the max or min values based on level 
-        if depth%2==1 and len(miniMaxDict)!=0:
-            return sorted(miniMaxDict.items())[0]
         if depth%2==0 and len(miniMaxDict)!=0:
+            print sorted(miniMaxDict.items())[0],"   fvf"
+            return sorted(miniMaxDict.items())[0]
+        if depth%2==1 and len(miniMaxDict)!=0:
             return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
 
     def move(self,board,block,enemyPos,flag):

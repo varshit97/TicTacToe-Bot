@@ -11,7 +11,7 @@
 
 """
 
-import random
+import random,datetime
 #import sys
 
 class Player36:
@@ -89,8 +89,18 @@ class Player36:
         ans=0
         for i in range(8):
             prerow=self.rows[i]
+            tempans=0
             for j in range(3):
-                ans+=temp[prerow[j]/3][prerow[j]%3]
+                tempans+=temp[prerow[j]/3][prerow[j]%3]/100.0
+            if (tempans>1 and tempans<10):
+                ans+=1+((tempans-1)*9)
+            elif (tempans>10 and tempans<100):
+                ans+=10+(tempans-10)*90
+            elif (tempans<-1 and tempans>-10):
+                ans+=-1+(tempans+1)*9
+            elif (tempans<-10 and tempans>-100):
+                ans+=-10+(tempans+10)*90
+
         return ans
 
 
@@ -120,12 +130,32 @@ class Player36:
         if(flag=='o' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='o'
         base_tuple=self.base[(enemyPos[0]/3,enemyPos[1]/3)]
+        glaf1=0
+        for i in range(8):
+            os=0
+            xs=0
+            prerow=self.rows[i]
+            for j in range(3):
+                if board[prerow[j]/3+base_tuple[0]][prerow[j]%3+base_tuple[1]]=='x':
+                    xs+=1
+                if board[prerow[j]/3+base_tuple[0]][prerow[j]%3+base_tuple[1]]=='o':
+                    os+=1
+            if os==3:
+                block[(enemyPos[0]/3)*3+(enemyPos[1]/3)]='o'
+                glaf1=1
+                break
+            if xs==3:
+                block[(enemyPos[0]/3)*3+(enemyPos[1]/3)]='x'
+                glaf1=1
+                break
+
+                
         for j in range(3):
             for k in range(3):
                 if board[j+base_tuple[0]][k+base_tuple[1]]=='-':
                     glaf=1
                     break
-        if glaf==0:
+        if (glaf==0 and glaf1==0):
             block[(enemyPos[0]/3)*3+(enemyPos[1]/3)]='D'
 
         ourBlocks=self.goTo[(enemyPos[0]%3,enemyPos[1]%3)]
@@ -152,7 +182,7 @@ class Player36:
             return ((p,p,p),0)
 
         #Final return of heuristic
-        if depth==3:
+        if depth==4:
             p=self.heuristic(board,block,flag)
             # print p
             # p=random.randint(-100,100)
@@ -184,7 +214,7 @@ class Player36:
                             # print "Before pruning:::",rtuple," ",childvalues," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             utility=rtuple
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
-                            if childvalues[0]>=childvalues[1]:
+                            if childvalues[0]>childvalues[1]:
                                 # print
                                 # print childvalues," 45678"," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                                 bflag=1
@@ -207,17 +237,11 @@ class Player36:
 
     def move(self,board,block,enemyPos,flag):
         #calling minimax funtion
+        print datetime.datetime.now()
         temp=[]
         for i in range(9):
             temp.append(block[i])
         final=self.makeMove(board,temp,enemyPos,0,flag,(float("-inf"),float("inf"),float("inf")))
         print 'Player sign and move',flag,final[1]
+        print datetime.datetime.now()
         return final[1]
-
-# flag=sys.argv[1]
-# flag='x'
-# play=Player36()
-# board=[[0 for i in range(9)]for i in range(9)]
-# block=1
-# x=play.move(board,block,(6,7),flag)
-# print x

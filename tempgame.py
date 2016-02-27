@@ -129,6 +129,10 @@ class Player36:
           board[enemyPos[0]][enemyPos[1]]='x'
         if(flag=='o' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='o'
+        if flag=='x':
+            flag='o'
+        else:
+            flag='x'
         base_tuple=self.base[(enemyPos[0]/3,enemyPos[1]/3)]
         glaf1=0
         for i in range(8):

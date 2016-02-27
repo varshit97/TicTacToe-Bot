@@ -46,12 +46,13 @@ class Player36:
 
     def makeMove(self,board,block,enemyPos,depth,flag,parentvalues):
 
-        childvalues = (float("-inf"),float("inf"))
+        # childvalues = (float("-inf"),float("inf"))
+        childvalues = parentvalues
         if((depth%2)==0):
-            temp = (float("-inf"),parentvalues[1])
+            temp = (float("-inf"),parentvalues[1],float("inf"))
             childvalues = temp
         else:
-            temp = (parentvalues[0],float("inf"))
+            temp = (parentvalues[0],float("inf"),float("-inf"))
             childvalues = temp
         #First move
         miniMaxDict={}
@@ -94,13 +95,13 @@ class Player36:
 
         #leaf node
         if(len(ourBlocks)==0):
-            p = random.randint(-10,10)
-            return ((p,p),0)
+            p = random.randint(-100,100)
+            return ((p,p,p),0)
 
         #Final return of heuristic
-        if depth==3:
-            p=random.randint(-10,10)
-            return ((p,p),0)
+        if depth==4:
+            p=random.randint(-100,100)
+            return ((p,p,p),0)
         else:
             for i in range(len(ourBlocks)):
                 cells=ourBlocks[i]
@@ -113,24 +114,24 @@ class Player36:
                             for l in range(9):
                                 for m in range(9):
                                     temp[l][m]=board[l][m]
-                            print "childvalues:::",childvalues,enemyPos
+                            print "childvalues:::",childvalues,enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             #Calling minimax recursively
                             rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues)[0]
                             if depth%2==1:
-                                temp1=(max(rtuple[0],childvalues[0]),childvalues[1])
+                                temp1=(max(rtuple[2],childvalues[2]),childvalues[1],max(rtuple[2],childvalues[2]))
                                 # childvalues[0]=max(rtuple[0],childvalues[0])
                                 childvalues = temp1
                             if depth%2==0:
-                                temp1 = (childvalues[0],min(rtuple[1],childvalues[1]))
+                                temp1 = (childvalues[0],min(rtuple[2],childvalues[2]),min(rtuple[2],childvalues[2]))
                                 # childvalues[1]=min(rtuple[1],childvalues[1])
                                 childvalues = temp1
                             print
-                            print "Before pruning:::",rtuple," ",childvalues," ",depth," ",enemyPos
+                            print "Before pruning:::",rtuple," ",childvalues," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             utility=rtuple
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
                             if childvalues[0]>=childvalues[1]:
                                 print
-                                print childvalues," 45678"," ",depth," ",enemyPos
+                                print childvalues," 45678"," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                                 bflag=1
                                 break
                     if bflag==1:
@@ -154,7 +155,7 @@ class Player36:
         temp=[]
         for i in range(9):
             temp.append(block[i])
-        final=self.makeMove(board,temp,enemyPos,0,flag,(float("-inf"),float("inf")))
+        final=self.makeMove(board,temp,enemyPos,0,flag,(float("-inf"),float("inf"),float("inf")))
         print 'Player sign and move',flag,final[1]
         return final[1]
 

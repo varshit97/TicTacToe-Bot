@@ -129,10 +129,10 @@ class Player36:
           board[enemyPos[0]][enemyPos[1]]='x'
         if(flag=='o' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='o'
-        if flag=='x':
-            flag='o'
-        else:
-            flag='x'
+        # if flag=='x':
+        #     flag='o'
+        # else:
+        #     flag='x'
         base_tuple=self.base[(enemyPos[0]/3,enemyPos[1]/3)]
         glaf1=0
         for i in range(8):
@@ -205,7 +205,10 @@ class Player36:
                                     temp[l][m]=board[l][m]
                             # print "childvalues:::",childvalues,enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             #Calling minimax recursively
-                            rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues)[0]
+                            fl = 'x'
+                            if flag=='x':
+                                fl='o'
+                            rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,fl,childvalues)[0]
                             if depth%2==0:
                                 temp1=(max(rtuple[2],childvalues[2]),childvalues[1],max(rtuple[2],childvalues[2]))
                                 # childvalues[0]=max(rtuple[0],childvalues[0])

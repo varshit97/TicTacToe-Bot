@@ -44,17 +44,24 @@ class Player36:
                 (2,2):[6,6],
                 }
 
-    def makeMove(self,board,block,enemyPos,depth,flag):
+    def makeMove(self,board,block,enemyPos,depth,flag,parentvalues):
 
+        # childvalues = (float("-inf"),float("inf"))
+        childvalues = parentvalues
+        if((depth%2)==0):
+            temp = (float("-inf"),parentvalues[1],float("inf"))
+            childvalues = temp
+        else:
+            temp = (parentvalues[0],float("inf"),float("-inf"))
+            childvalues = temp
         #First move
         miniMaxDict={}
         if enemyPos[0]==-1:
             pos=(4,(2,2))
             return pos
 
-        #To determine draw of a block
-        drawFlag=0
-
+        # glaf var to determine draw of a block
+        glaf=0
         #Assigning signs
         if(flag=='x' and depth!=0):
           board[enemyPos[0]][enemyPos[1]]='x'
@@ -64,9 +71,9 @@ class Player36:
         for j in range(3):
             for k in range(3):
                 if board[j+base_tuple[0]][k+base_tuple[1]]=='-':
-                    drawFlag=1
+                    glaf=1
                     break
-        if drawFlag==0:
+        if glaf==0:
             block[(enemyPos[0]/3)*3+(enemyPos[1]/3)]='D'
 
         ourBlocks=self.goTo[(enemyPos[0]%3,enemyPos[1]%3)]
@@ -88,16 +95,18 @@ class Player36:
 
         #leaf node
         if(len(ourBlocks)==0):
-            return (random.randint(-10,10),0)
+            p = random.randint(-100,100)
+            return ((p,p,p),0)
 
         #Final return of heuristic
-        if depth==2:
-            p=random.randint(-10,10)
-            return (p,0)
+        if depth==4:
+            p=random.randint(-100,100)
+            return ((p,p,p),0)
         else:
             for i in range(len(ourBlocks)):
                 cells=ourBlocks[i]
                 base_tuple=self.base[cells]
+                bflag=0 
                 for j in range(3):
                     for k in range(3):
                         if board[j+base_tuple[0]][k+base_tuple[1]]=='-':
@@ -105,27 +114,48 @@ class Player36:
                             for l in range(9):
                                 for m in range(9):
                                     temp[l][m]=board[l][m]
-
+                            print "childvalues:::",childvalues,enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             #Calling minimax recursively
-                            rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag)
-                            utility=rtuple[0]
+                            rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues)[0]
+                            if depth%2==1:
+                                temp1=(max(rtuple[2],childvalues[2]),childvalues[1],max(rtuple[2],childvalues[2]))
+                                # childvalues[0]=max(rtuple[0],childvalues[0])
+                                childvalues = temp1
+                            if depth%2==0:
+                                temp1 = (childvalues[0],min(rtuple[2],childvalues[2]),min(rtuple[2],childvalues[2]))
+                                # childvalues[1]=min(rtuple[1],childvalues[1])
+                                childvalues = temp1
+                            print
+                            print "Before pruning:::",rtuple," ",childvalues," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
+                            utility=rtuple
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
+                            if childvalues[0]>=childvalues[1]:
+                                print
+                                print childvalues," 45678"," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
+                                bflag=1
+                                break
+                    if bflag==1:
+                        break
 
         # print "miniMax len %s" %len(miniMaxDict)
+        print
+        print miniMaxDict
+        print
 
         #Return the max or min values based on level 
-        if depth%2==0 and len(miniMaxDict)!=0:
-            print sorted(miniMaxDict.items())[0],"   fvf"
+        if depth%2==0 and len(miniMaxDict)!=0 and depth==0:
             return sorted(miniMaxDict.items())[0]
-        if depth%2==1 and len(miniMaxDict)!=0:
-            return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
+        else:
+            return (childvalues,enemyPos)
+        # if depth%2==1 and len(miniMaxDict)!=0:
+        #     return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
 
     def move(self,board,block,enemyPos,flag):
         #calling minimax funtion
         temp=[]
         for i in range(9):
             temp.append(block[i])
-        final=self.makeMove(board,temp,enemyPos,0,flag)
+        final=self.makeMove(board,temp,enemyPos,0,flag,(float("-inf"),float("inf"),float("inf")))
         print 'Player sign and move',flag,final[1]
         return final[1]
 

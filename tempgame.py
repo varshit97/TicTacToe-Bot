@@ -100,7 +100,7 @@ class Player36:
 
         # childvalues = (float("-inf"),float("inf"))
         childvalues = parentvalues
-        if((depth%2)==0):
+        if((depth%2)==1):
             temp = (parentvalues[0],parentvalues[1],float("inf"))
             childvalues = temp
         else:
@@ -152,7 +152,7 @@ class Player36:
             return ((p,p,p),0)
 
         #Final return of heuristic
-        if depth==2:
+        if depth==3:
             p=self.heuristic(board,block,flag)
             # print p
             # p=random.randint(-100,100)
@@ -172,11 +172,11 @@ class Player36:
                             # print "childvalues:::",childvalues,enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             #Calling minimax recursively
                             rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues)[0]
-                            if depth%2==1:
+                            if depth%2==0:
                                 temp1=(max(rtuple[2],childvalues[2]),childvalues[1],max(rtuple[2],childvalues[2]))
                                 # childvalues[0]=max(rtuple[0],childvalues[0])
                                 childvalues = temp1
-                            if depth%2==0:
+                            if depth%2==1:
                                 temp1 = (childvalues[0],min(rtuple[2],childvalues[2]),min(rtuple[2],childvalues[2]))
                                 # childvalues[1]=min(rtuple[1],childvalues[1])
                                 childvalues = temp1
@@ -199,7 +199,7 @@ class Player36:
 
         #Return the max or min values based on level 
         if depth%2==0 and len(miniMaxDict)!=0 and depth==0:
-            return sorted(miniMaxDict.items())[0]
+            return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
         else:
             return (childvalues,enemyPos)
         # if depth%2==1 and len(miniMaxDict)!=0:

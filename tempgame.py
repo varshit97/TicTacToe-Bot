@@ -44,6 +44,58 @@ class Player36:
                 (2,2):[6,6],
                 }
 
+        self.rows=((0,1,2),(3,4,5),(6,7,8),(0,3,6),(1,4,7),(2,5,8),(0,4,8),(2,4,6))
+
+    def heuristic(self,board,block,flag):
+        blocks=((0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2))
+        temp = [[0 for aa in range(3)] for bb in range(3)]
+        for i in range(len(block)):
+            ans=0
+            base_tuple=self.base[blocks[i]]
+            for j in range(8):
+                os=0
+                xs=0
+                prerow = self.rows[j]
+                for k in range(3):
+                    if board[prerow[k]/3+base_tuple[0]][prerow[k]%3+base_tuple[1]]=='x':
+                        xs+=1
+                    if board[prerow[k]/3+base_tuple[0]][prerow[k]%3+base_tuple[1]]=='o':
+                        os+=1
+                if(flag=='x'):
+                    if xs==3:
+                        ans+=100
+                    elif xs==2 and os==0:
+                        ans+=10
+                    elif xs==1:
+                        ans+=1
+
+                    if os==3:
+                        ans-=100
+                    elif os==2 and xs==0:
+                        ans-=10
+                if(flag=='o'):
+                    if os==3:
+                        ans+=100
+                    elif os==2 and xs==0:
+                        ans+=10
+                    elif os==1:
+                        ans+=1
+
+                    if xs==3:
+                        ans-=100
+                    elif xs==2 and os==0:
+                        ans-=10
+            temp[i/3][i%3]=ans
+        ans=0
+        for i in range(8):
+            prerow=self.rows[i]
+            for j in range(3):
+                ans+=temp[prerow[j]/3][prerow[j]%3]
+        return ans
+
+
+
+
     def makeMove(self,board,block,enemyPos,depth,flag,parentvalues):
 
         # childvalues = (float("-inf"),float("inf"))
@@ -95,12 +147,15 @@ class Player36:
 
         #leaf node
         if(len(ourBlocks)==0):
-            p = random.randint(-100,100)
+            p=self.heuristic(board,block,flag)
+            # p = random.randint(-100,100)
             return ((p,p,p),0)
 
         #Final return of heuristic
-        if depth==4:
-            p=random.randint(-100,100)
+        if depth==2:
+            p=self.heuristic(board,block,flag)
+            # print p
+            # p=random.randint(-100,100)
             return ((p,p,p),0)
         else:
             for i in range(len(ourBlocks)):

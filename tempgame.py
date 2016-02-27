@@ -49,10 +49,10 @@ class Player36:
         # childvalues = (float("-inf"),float("inf"))
         childvalues = parentvalues
         if((depth%2)==0):
-            temp = (float("-inf"),parentvalues[1],float("inf"))
+            temp = (parentvalues[0],parentvalues[1],float("inf"))
             childvalues = temp
         else:
-            temp = (parentvalues[0],float("inf"),float("-inf"))
+            temp = (parentvalues[0],parentvalues[1],float("-inf"))
             childvalues = temp
         #First move
         miniMaxDict={}
@@ -114,7 +114,7 @@ class Player36:
                             for l in range(9):
                                 for m in range(9):
                                     temp[l][m]=board[l][m]
-                            print "childvalues:::",childvalues,enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
+                            # print "childvalues:::",childvalues,enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             #Calling minimax recursively
                             rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues)[0]
                             if depth%2==1:
@@ -125,22 +125,22 @@ class Player36:
                                 temp1 = (childvalues[0],min(rtuple[2],childvalues[2]),min(rtuple[2],childvalues[2]))
                                 # childvalues[1]=min(rtuple[1],childvalues[1])
                                 childvalues = temp1
-                            print
-                            print "Before pruning:::",rtuple," ",childvalues," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
+                            # print
+                            # print "Before pruning:::",rtuple," ",childvalues," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             utility=rtuple
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
                             if childvalues[0]>=childvalues[1]:
-                                print
-                                print childvalues," 45678"," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
+                                # print
+                                # print childvalues," 45678"," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                                 bflag=1
                                 break
                     if bflag==1:
                         break
 
         # print "miniMax len %s" %len(miniMaxDict)
-        print
-        print miniMaxDict
-        print
+        # print
+        # print miniMaxDict
+        # print
 
         #Return the max or min values based on level 
         if depth%2==0 and len(miniMaxDict)!=0 and depth==0:

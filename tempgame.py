@@ -45,6 +45,7 @@ class Player36:
                 }
 
         self.rows=((0,1,2),(3,4,5),(6,7,8),(0,3,6),(1,4,7),(2,5,8),(0,4,8),(2,4,6))
+        self.directreturn=0
 
     def heuristic(self,board,block,flag):
         blocks=((0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2))
@@ -90,8 +91,22 @@ class Player36:
         for i in range(8):
             prerow=self.rows[i]
             tempans=0
+            os=0
+            xs=0
             for j in range(3):
                 tempans+=temp[prerow[j]/3][prerow[j]%3]/100.0
+                if block[prerow[j]]=='x':
+                    xs+=1
+                if block[prerow[j]]=='o':
+                    os+=1
+            if flag=='o' and xs==3:
+                ans-=1000
+            if flag=='x' and os==3:
+                ans-=1000
+            if flag=='x' and xs==3:
+                ans+=1000
+            if flag=='o' and os==3:
+                ans+=1000
             if (tempans>1 and tempans<10):
                 ans+=1+((tempans-1)*9)
             elif (tempans>10 and tempans<100):
@@ -153,6 +168,24 @@ class Player36:
                 glaf1=1
                 break
 
+        # if depth==1:
+        #     for i in range(8):
+        #         prerow=self.rows[i]
+        #         os=0
+        #         xs=0
+        #         for j in range(3):
+        #             if block[prerow[j]]=='x':
+        #                 xs+=1
+        #             if block[prerow[j]]=='o':
+        #                 os+=1
+        #         if self.flag5=='x' and xs==3:
+        #             self.directreturn=1
+        #             return ((1000,1000,1000),enemyPos)
+        #         if self.flag5=='o' and os==3:
+        #             self.directreturn=1
+        #             return ((1000,1000,1000),enemyPos)
+
+
                 
         for j in range(3):
             for k in range(3):
@@ -181,13 +214,13 @@ class Player36:
 
         #leaf node
         if(len(ourBlocks)==0):
-            p=self.heuristic(board,block,flag)
+            p=self.heuristic(board,block,self.flag5)
             # p = random.randint(-100,100)
             return ((p,p,p),0)
 
         #Final return of heuristic
         if depth==4:
-            p=self.heuristic(board,block,flag)
+            p=self.heuristic(board,block,self.flag5)
             # print p
             # p=random.randint(-100,100)
             return ((p,p,p),0)
@@ -198,6 +231,8 @@ class Player36:
                 bflag=0 
                 for j in range(3):
                     for k in range(3):
+                        if self.directreturn==1:
+                            break
                         if board[j+base_tuple[0]][k+base_tuple[1]]=='-':
                             temp = [['-' for aa in range(9)] for bb in range(9)]
                             for l in range(9):
@@ -205,10 +240,10 @@ class Player36:
                                     temp[l][m]=board[l][m]
                             # print "childvalues:::",childvalues,enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             #Calling minimax recursively
-                            fl = 'x'
-                            if flag=='x':
-                                fl='o'
-                            rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,fl,childvalues)[0]
+                            # fl = 'x'
+                            # if flag=='x':
+                            #     fl='o'
+                            rtuple=self.makeMove(temp,block,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues)[0]
                             if depth%2==0:
                                 temp1=(max(rtuple[2],childvalues[2]),childvalues[1],max(rtuple[2],childvalues[2]))
                                 # childvalues[0]=max(rtuple[0],childvalues[0])
@@ -221,7 +256,7 @@ class Player36:
                             # print "Before pruning:::",rtuple," ",childvalues," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                             utility=rtuple
                             miniMaxDict[utility]=(j+base_tuple[0],k+base_tuple[1])
-                            if childvalues[0]>childvalues[1]:
+                            if childvalues[0]>=childvalues[1]:
                                 # print
                                 # print childvalues," 45678"," ",depth," ",enemyPos," ",(j+base_tuple[0],k+base_tuple[1])
                                 bflag=1
@@ -245,6 +280,11 @@ class Player36:
     def move(self,board,block,enemyPos,flag):
         #calling minimax funtion
         print datetime.datetime.now()
+        # if flag=='x':
+        #     flag='o'
+        # else:
+        #     flag='x'
+        self.flag5=flag
         temp=[]
         for i in range(9):
             temp.append(block[i])

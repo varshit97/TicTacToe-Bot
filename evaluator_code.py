@@ -16,7 +16,13 @@ In case of any queries, please post on moodle.iiit.ac.in
 import sys
 import random
 import signal
-from game import Player36
+import team45
+import tempgame
+import team81
+import team4
+
+class TimedOutExc(Exception):
+        pass
 
 def handler(signum, frame):
     #print 'Signal handler called with signal', signum
@@ -38,24 +44,24 @@ class Player1:
 	
 	def __init__(self):
 		# You may initialize your object here and use any variables for storing throughout the game
-		pass
+		self.a = tempgame.Player36()
+		
 
 	def move(self,temp_board,temp_block,old_move,flag):
 		#List of permitted blocks, based on old move.
 		blocks_allowed  = determine_blocks_allowed(old_move, temp_block)
 		#Get list of empty valid cells
 		cells = get_empty_out_of(temp_board, blocks_allowed,temp_block)
-                obj1 = Player36()
-                mvp = obj1.move(temp_board,temp_block,old_move,flag)
-                return (int(mvp[0]), int(mvp[1]))
 		#Choose a move based on some algorithm, here it is a random move.
-		#return cells[random.randrange(len(cells))]
+		return self.a.move(temp_board,temp_block,old_move,flag)
+		return cells[random.randrange(len(cells))]
 
 class Player2:
 	
 	def __init__(self):
 		# You may initialize your object here and use any variables for storing throughout the game
-		pass
+		self.a = team45.Player45()
+		
 
 	def move(self,temp_board,temp_block,old_move,flag):
 		#List of permitted blocks, based on old move.
@@ -63,6 +69,7 @@ class Player2:
 		#Get list of empty valid cells
 		cells = get_empty_out_of(temp_board, blocks_allowed,temp_block)
 		#Choose a move based on some algorithm, here it is a random move.
+		return self.a.move(temp_board,temp_block,old_move,flag)
 		return cells[random.randrange(len(cells))]
 
 def determine_blocks_allowed(old_move, block_stat):
@@ -188,8 +195,6 @@ def update_lists(game_board, block_stat, move_ret, fl):
 			if game_board[i][j] == '-':
 				flag = 1
 
-	if flag == 0:
-		block_stat[block_no] = 'D'
 
 	if block_stat[block_no] == '-':
 		if game_board[id1*3][id2*3] == game_board[id1*3+1][id2*3+1] and game_board[id1*3+1][id2*3+1] == game_board[id1*3+2][id2*3+2] and game_board[id1*3+1][id2*3+1] != '-' and game_board[id1*3+1][id2*3+1] != 'D':
@@ -206,6 +211,8 @@ def update_lists(game_board, block_stat, move_ret, fl):
                         if game_board[i][id2*3]==game_board[i][id2*3+1] and game_board[i][id2*3+1] == game_board[i][id2*3+2] and game_board[i][id2*3] != '-' and game_board[i][id2*3] != 'D':
                                 mflg = 1
                                 break
+	if flag == 0:
+		block_stat[block_no] = 'D'
 	if mflg == 1:
 		block_stat[block_no] = fl
 	
@@ -297,7 +304,7 @@ def simulate(obj1,obj2):
 
 	WINNER = ''
 	MESSAGE = ''
-	TIMEALLOWED = 12000
+	TIMEALLOWED = 12
 	p1_pts=0
 	p2_pts=0
 
@@ -310,14 +317,14 @@ def simulate(obj1,obj2):
 	
 		signal.signal(signal.SIGALRM, handler)
 		signal.alarm(TIMEALLOWED)
-		ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
+#		ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
 
-#		try:
-#			ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
-#		except:
-#			WINNER, MESSAGE = decide_winner_and_get_message('P1', 'L',   'TIMED OUT')
-#			print MESSAGE
-#			break
+		try:
+			ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
+		except:
+			WINNER, MESSAGE = decide_winner_and_get_message('P1', 'L',   'TIMED OUT')
+		#	print MESSAGE
+			break
 		signal.alarm(0)
 	
 		# Check if list is tampered.

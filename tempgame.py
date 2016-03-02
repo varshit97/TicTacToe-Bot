@@ -67,6 +67,8 @@ class Player36:
                         ans+=100
                     elif xs==2 and os==0:
                         ans+=10
+                    elif xs==2 and os==1:
+                        ans+=5
                     elif xs==1:
                         ans+=1
 
@@ -74,11 +76,17 @@ class Player36:
                         ans-=100
                     elif os==2 and xs==0:
                         ans-=10
+                    elif os==2 and xs==0:
+                        ans-=5
+                    elif os==1 and xs==0:
+                        ans-=0.5
                 if(flag=='o'):
                     if os==3:
                         ans+=100
                     elif os==2 and xs==0:
                         ans+=10
+                    elif os==2 and xs==1:
+                        ans+=5
                     elif os==1:
                         ans+=1
 
@@ -86,6 +94,10 @@ class Player36:
                         ans-=100
                     elif xs==2 and os==0:
                         ans-=10
+                    elif xs==2 and os==1:
+                        ans-=5
+                    elif xs==1 and os==0:
+                        ans-=0.5
             temp[i/3][i%3]=ans
             # print
             # print ans,blocks[i]
@@ -134,9 +146,10 @@ class Player36:
 
 
 
-    def makeMove(self,board,block,enemyPos,depth,flag,parentvalues):
+    def makeMove(self,board,block,enemyPos,depth,flag,parentvalues,maxdepth):
 
         # childvalues = (float("-inf"),float("inf"))
+        # print enemyPos
         if self.flag5=='o':
             if depth%2==0:
                 flag='x'
@@ -235,6 +248,11 @@ class Player36:
                     templist.append((position/3,position%3))
         ourBlocks = templist
 
+        # if depth==1:
+        #     print ourBlocks,"  1"
+        # if depth==0:
+        #     print ourBlocks," 0"
+
         #leaf node
         if(len(ourBlocks)==0):
             p=self.heuristic(board,block,self.flag5)
@@ -242,7 +260,7 @@ class Player36:
             return ((p,p,p),0)
 
         #Final return of heuristic
-        if depth==4:
+        if depth==maxdepth:
             p=self.heuristic(board,block,self.flag5)
             # print p
             # p=random.randint(-100,100)
@@ -275,7 +293,7 @@ class Player36:
                             # fl = 'x'
                             # if flag=='x':
                             #     fl='o'
-                            rtuple=self.makeMove(temp,tempblock,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues)[0]
+                            rtuple=self.makeMove(temp,tempblock,(j+base_tuple[0],k+base_tuple[1]),depth+1,flag,childvalues,maxdepth)[0]
                             if depth%2==0:
                                 temp1=(max(rtuple[2],childvalues[2]),childvalues[1],max(rtuple[2],childvalues[2]))
                                 # childvalues[0]=max(rtuple[0],childvalues[0])
@@ -306,13 +324,13 @@ class Player36:
             maxutility=float("-inf")
             pointtogo=(1,2)
             for qqq in range(len(miniMaxDict)):
-                print maxutility,miniMaxDict.keys()[i][2]
+                # print maxutility,miniMaxDict.keys()[i][2]
                 if miniMaxDict.keys()[qqq][2]>maxutility:
                     maxutility=miniMaxDict.keys()[qqq][2]
                     pointtogo = miniMaxDict.values()[qqq]
-            print miniMaxDict
+            # print miniMaxDict
             return (0,pointtogo)
-            return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
+            #return sorted(miniMaxDict.items())[len(miniMaxDict)-1]
         else:
             return (childvalues,enemyPos)
         # if depth%2==1 and len(miniMaxDict)!=0:
@@ -320,7 +338,7 @@ class Player36:
 
     def move(self,board,block,enemyPos,flag):
         #calling minimax funtion
-        print datetime.datetime.now()
+        starttime = datetime.datetime.now()
         self.flag5=flag
         # if flag=='x':
         #     flag='o'
@@ -329,7 +347,9 @@ class Player36:
         temp=[]
         for i in range(9):
             temp.append(block[i])
-        final=self.makeMove(board,temp,enemyPos,0,flag,(float("-inf"),float("inf"),float("inf")))
+        final=self.makeMove(board,temp,enemyPos,0,flag,(float("-inf"),float("inf"),float("inf")),4)
         print 'Player sign and move',flag,final[1]
-        print datetime.datetime.now()
+        endtime = datetime.datetime.now()
+        runtime = endtime-starttime
+        print runtime
         return final[1]
